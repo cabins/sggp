@@ -49,8 +49,9 @@ func main() {
 
 	json.NewDecoder(resp.Body).Decode(&repos)
 
-	fmt.Printf("%15s\t%30s\t%s\t%s\t%10s\t%10s\t%10s\t%s\n", "Name", "Url", "Description", "Stars", "Forks", "Language", "License")
+	fmt.Printf("%-6s\t%-6s\t%-25s\t%-50s\t%-10s\t%-20s\t%s\n", "Stars", "Forks", "Name", "Url", "Language", "License", "Description")
+	fmt.Printf("%-6s\t%-6s\t%-25s\t%-50s\t%-10s\t%-20s\t%s\n", "-----", "-----", "----", "---", "--------", "-------", "-----------")
 	for _, item := range repos.Items[0:10] {
-		fmt.Printf("%15s\t%30s\t%d\t%d\t%10s\t%10s\t%10s\t%s\n", item.Name, item.HtmlUrl, item.StarGazersCount, item.ForksCount, item.Language, item.License.Name, item.Description)
+		fmt.Printf("%-6d\t%-6d\t%-25s\t%-50s\t%-10s\t%-20s\t%s\n", item.StarGazersCount, item.ForksCount, item.Name, item.HtmlUrl, item.Language, item.License.Name, item.Description)
 	}
 }
