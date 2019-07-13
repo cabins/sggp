@@ -3,9 +3,13 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	"fmt"
+
+	"github.com/olekukonko/tablewriter"
 )
 
 type Repos struct {
@@ -49,15 +53,24 @@ func main() {
 
 	json.NewDecoder(resp.Body).Decode(&repos)
 
-	fmt.Printf("%-6s\t%-6s\t%-25s\t%-25s\t%-10s\t%-20s\t%s\n", "Stars", "Forks", "Name", "Url", "Language", "License", "Description")
-	fmt.Printf("%-6s\t%-6s\t%-25s\t%-25s\t%-10s\t%-20s\t%s\n", "-----", "-----", "----", "---", "--------", "-------", "-----------")
-	for _, item := range repos.Items[0:10] {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Stars", "Forks", "Name", "Url", "Language", "License", "Description"})
+
+	length := len(repos.Items)
+	if length > 10 {
+		length = 10
+	}
+
+	for _, item := range repos.Items[0:length] {
 		var desc string
 		if len(item.Description) > 30 {
 			desc = item.Description[0:30] + "..."
 		} else {
 			desc = item.Description
 		}
-		fmt.Printf("%-6d\t%-6d\t%-25s\t%-25s\t%-10s\t%-20s\t%s\n", item.StarGazersCount, item.ForksCount, item.Name, item.HtmlUrl, item.Language, item.License.Name, desc)
+
+		table.Append([]string{fmt.Sprintf("%d", item.StarGazersCount), fmt.Sprintf("%d", item.ForksCount), item.Name, item.HtmlUrl, item.Language, item.License.Name, desc})
 	}
+
+	table.Render()
 }
